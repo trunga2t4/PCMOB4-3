@@ -10,7 +10,6 @@ const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      {" "}
       <Stack.Navigator>
         <Stack.Screen
           name="Chat Screen"
@@ -19,7 +18,7 @@ export default function App() {
             title: "To Chat or Not To Chat",
             headerStyle: {
               backgroundColor: "yellow",
-              height: 60,
+              height: 100,
               shadowColor: "black",
               shadowOpacity: 0.2,
               shadowRadius: 5,
@@ -39,7 +38,7 @@ export default function App() {
             headerLeft: null,
             headerStyle: {
               backgroundColor: "yellow",
-              height: 60,
+              height: 100,
               shadowColor: "black",
               shadowOpacity: 0.2,
               shadowRadius: 5,

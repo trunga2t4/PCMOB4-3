@@ -5,23 +5,39 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  Keyboard,
 } from "react-native";
 import { Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
 import firebase from "../database/firebaseDB";
 
+const db = firebase.firestore();
+const auth = firebase.auth();
+
 export default function loginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  function login() {
+    Keyboard.dismiss();
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        console.log("Welcome to our chat");
+        navigation.navigate("Chat Screen", { email });
+      })
+      .catch((error) => {
+        console.log("Error");
+        setError("Wrong email or password. Please try again!");
+      });
+  }
+
   return (
     <View style={[styles.container, { backgroundColor: "white" }]}>
       <Text style={{ fontSize: 24 }}>Chat App</Text>
 
       <View style={[styles.container2]}>
-        <Text
-          style={{ fontSize: 16, textAlign: "left", justifyContent: "left" }}
-        >
-          Email
-        </Text>
+        <Text style={{ fontSize: 16 }}>Email</Text>
         <TextInput
           style={styles.textInput}
           value={email}
@@ -30,11 +46,7 @@ export default function loginScreen({ navigation }) {
       </View>
 
       <View style={[styles.container2]}>
-        <Text
-          style={{ fontSize: 16, textAlign: "left", justifyContent: "left" }}
-        >
-          Password
-        </Text>
+        <Text style={{ fontSize: 16 }}>Password</Text>
         <TextInput
           style={styles.textInput}
           value={password}
@@ -44,17 +56,13 @@ export default function loginScreen({ navigation }) {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={
-            () => console.log(email + "  " + password)
-            //navigation.navigate("Chat Screen", { email, password })
-          }
-        >
+        <TouchableOpacity style={styles.button} onPress={login}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>
-      {/* <Text>{text.toUpperCase()}</Text> */}
+      <View style={[styles.container2]}>
+        <Text style={{ fontSize: 16, color: "red" }}>{error}</Text>
+      </View>
     </View>
   );
 }
@@ -67,7 +75,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   container2: {
-    alignItems: "left",
+    alignItems: "flex-start",
     width: "80%",
   },
   textInput: {
