@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,9 +10,28 @@ import {
 } from "react-native";
 import { Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
 import firebase from "../database/firebaseDB";
+import { GiftedChat } from "react-native-gifted-chat";
+
+const db = firebase.firestore().collection("messages");
 
 export default function chatScreen({ navigation }) {
+  const [messages, setMessages] = useState([]);
   useEffect(() => {
+    const unsubcribe = db
+      .orderBy("createdAt", "desc")
+      .onSnapshot((collectionSnapshot) => {
+        const serverMessages = collectionSnapshot.docs.map((doc) => {
+          const data = doc.data();
+          const jsDate = new Date(data.createdAt.seconds * 1000);
+          const newDoc = {
+            ...data,
+            createdAt: jsDate,
+          };
+          return newDoc;
+        });
+        setMessages(serverMessages);
+      });
+
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         navigation.navigate("Chat Screen", { id: user.id, email: user.email });
@@ -20,9 +39,7 @@ export default function chatScreen({ navigation }) {
         navigation.navigate("Login Screen");
       }
     });
-  }, []);
 
-  useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={logOut}>
@@ -38,22 +55,33 @@ export default function chatScreen({ navigation }) {
         </TouchableOpacity>
       ),
     });
-  });
+    return unsubcribe;
+  }, []);
 
   function logOut() {
     firebase.auth().signOut();
   }
 
-  return (
-    <ScrollView
-      contentContainerStyle={[
-        styles.container,
-        { justifyContent: "flex-start" },
-      ]}
-    >
-      <Text>Chat Screen</Text>
-    </ScrollView>
-  );
+  function onSend(messages) {
+    console.log(messages);
+    db.add(messages[0]);
+  }
+
+  if (firebase.auth().currentUser) {
+    return (
+      <GiftedChat
+        messages={messages}
+        onSend={(messages) => onSend(messages)}
+        user={{
+          _id: firebase.auth().currentUser.uid,
+          name: firebase.auth().currentUser.email,
+          //avatar: "https://placeimg.com/140/140/any",
+        }}
+      />
+    );
+  } else {
+    return null;
+  }
 }
 
 const styles = StyleSheet.create({
