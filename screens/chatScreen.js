@@ -16,7 +16,7 @@ export default function chatScreen({ navigation }) {
       headerRight: () => (
         <TouchableOpacity onPress={logOut}>
           <Ionicons
-            name="ios-create-outline"
+            name="log-out"
             size={30}
             color="black"
             style={{

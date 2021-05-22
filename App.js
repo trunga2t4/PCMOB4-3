@@ -19,7 +19,7 @@ export default function App() {
             title: "To Chat or Not To Chat",
             headerStyle: {
               backgroundColor: "yellow",
-              height: 100,
+              height: 60,
               shadowColor: "black",
               shadowOpacity: 0.2,
               shadowRadius: 5,
@@ -36,9 +36,10 @@ export default function App() {
           component={loginScreen}
           options={{
             title: "Login",
+            headerLeft: null,
             headerStyle: {
               backgroundColor: "yellow",
-              height: 100,
+              height: 60,
               shadowColor: "black",
               shadowOpacity: 0.2,
               shadowRadius: 5,
