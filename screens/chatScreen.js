@@ -1,45 +1,16 @@
-import React, { useEffect, useCallback, useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-  FlatList,
-  ScrollView,
-  Button,
-} from "react-native";
-import { Ionicons, AntDesign, Entypo } from "@expo/vector-icons";
+import React, { useEffect } from "react";
+import { TouchableOpacity } from "react-native";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import firebase from "../database/firebaseDB";
-import { GiftedChat } from "react-native-gifted-chat";
+import CommonScreen from "./CommonScreen";
+import SubGroupScreen from "./SubGroupScreen";
+import PrivateScreen from "./PrivateScreen";
 
-const db = firebase.firestore().collection("messages");
+const Tab = createBottomTabNavigator();
 
 export default function chatScreen({ navigation }) {
-  const [messages, setMessages] = useState([]);
   useEffect(() => {
-    const unsubcribe = db
-      .orderBy("createdAt", "desc")
-      .onSnapshot((collectionSnapshot) => {
-        const serverMessages = collectionSnapshot.docs.map((doc) => {
-          const data = doc.data();
-          const jsDate = new Date(data.createdAt.seconds * 1000);
-          const newDoc = {
-            ...data,
-            createdAt: jsDate,
-          };
-          return newDoc;
-        });
-        setMessages(serverMessages);
-      });
-
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        navigation.navigate("Chat Screen", { id: user.id, email: user.email });
-      } else {
-        navigation.navigate("Login Screen");
-      }
-    });
-
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={logOut}>
@@ -55,39 +26,35 @@ export default function chatScreen({ navigation }) {
         </TouchableOpacity>
       ),
     });
-    return unsubcribe;
-  }, []);
-
+  });
   function logOut() {
     firebase.auth().signOut();
   }
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-  function onSend(messages) {
-    console.log(messages);
-    db.add(messages[0]);
-  }
+          if (route.name === "Common Room") {
+            iconName = focused ? "home" : "home";
+          } else if (route.name === "Sub Groups") {
+            iconName = focused ? "group" : "group";
+          } else if (route.name === "Private Chats") {
+            iconName = focused ? "user-secret" : "user-secret";
+          }
 
-  if (firebase.auth().currentUser) {
-    return (
-      <GiftedChat
-        messages={messages}
-        onSend={(messages) => onSend(messages)}
-        user={{
-          _id: firebase.auth().currentUser.uid,
-          name: firebase.auth().currentUser.email,
-          //avatar: "https://placeimg.com/140/140/any",
-        }}
-      />
-    );
-  } else {
-    return null;
-  }
+          return <FontAwesome name={iconName} color={color} size={size} />;
+        },
+      })}
+      tabBarOptions={{
+        activeTintColor: "blue",
+        inactiveTintColor: "gray",
+      }}
+    >
+      <Tab.Screen name="Common Room" component={CommonScreen} />
+      <Tab.Screen name="Sub Groups" component={SubGroupScreen} />
+      <Tab.Screen name="Private Chats" component={PrivateScreen} />
+    </Tab.Navigator>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: "#ffc",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});

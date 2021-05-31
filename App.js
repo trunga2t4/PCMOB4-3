@@ -15,17 +15,18 @@ export default function App() {
           name="Chat Screen"
           component={chatScreen}
           options={{
-            title: "To Chat or Not To Chat",
+            title: "From Atom to Universe, Share Here!",
+            headerShown: true,
             headerStyle: {
-              backgroundColor: "yellow",
-              height: 100,
+              backgroundColor: "#ffc",
               shadowColor: "black",
               shadowOpacity: 0.2,
               shadowRadius: 5,
             },
             headerTintColor: "#f55",
             headerTitleStyle: {
-              fontSize: 24,
+              fontSize: 18,
+              color: "navy",
               fontWeight: "bold",
             },
           }}
@@ -36,30 +37,9 @@ export default function App() {
           options={{
             title: "Login",
             headerShown: false,
-            headerStyle: {
-              backgroundColor: "yellow",
-              height: 100,
-              shadowColor: "black",
-              shadowOpacity: 0.2,
-              shadowRadius: 5,
-            },
-            headerTintColor: "#f55",
-            headerTitleStyle: {
-              fontSize: 24,
-              fontWeight: "bold",
-            },
           }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
