@@ -42,6 +42,7 @@ export default function loginScreen({ route, navigation }) {
   }
 
   function register() {
+    const emailLowerCase = email.toLowerCase();
     Keyboard.dismiss();
     auth
       .createUserWithEmailAndPassword(email, password)
@@ -58,7 +59,7 @@ export default function loginScreen({ route, navigation }) {
           collection = [...collection, "messagesTech"];
         }
 
-        setDocument(userId, displayName, email, photoURL, collection);
+        setDocument(userId, displayName, emailLowerCase, photoURL, collection);
         console.log("Registered user: " + userId);
       })
       .catch((error) => {

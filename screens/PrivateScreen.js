@@ -125,7 +125,7 @@ export default function PrivateScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <View style={styles.container2}>
-          <Text style={styles.title}>Pear-to-Pear Chats</Text>
+          <Text style={styles.title}>Peer-to-Peer Chats</Text>
         </View>
         <View style={[styles.container3]}>
           <View style={styles.container4}>
